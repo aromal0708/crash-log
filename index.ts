@@ -1,4 +1,5 @@
-import { overRideConsoleText } from "./logger";
+import { overRideConsoleText } from "./lib/logger.js";
+
 
 overRideConsoleText();
 
