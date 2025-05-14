@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { overRideConsoleText } from "../../lib/logger";
 
 export const errorHandler = (
   err: Error,
@@ -6,7 +7,16 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.text(`[Error] ${err.message}`);
+  overRideConsoleText();
+  const statusCode = res.statusCode || 500;
+  
+  const message = err.message || "Internal Server Error";
+  if (console.text) {
+    console.text(`[${req.method}] ${req.originalUrl} -> ${message}`);
+  }
 
-  res.status(50).json({ error: "Something went wrong" });
+  res.status(statusCode).json({
+    success: false,
+    message,
+  });
 };
