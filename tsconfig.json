@@ -15,7 +15,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
-  },
-  "include": ["./","lib/*/*.ts","types","types/global.d.ts", "server/*/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  },  "include": ["lib/**/*", "server/**/*", "types/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "typeRoots": ["./types", "./node_modules/@types"],
+  "files": ["types/global.d.ts"]
 }

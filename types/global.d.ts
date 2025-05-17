@@ -1,6 +1,6 @@
 declare global {
   interface Console {
-    text(text: string): void;
+    text: (error: Error) => void;
   }
 }
 

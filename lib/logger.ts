@@ -4,11 +4,14 @@ import dayjs from "dayjs";
 import { ParseError } from "@/types";
 import { parseError } from "./parseError";
 
-declare global {
-  interface Console {
-    text(text: string): void;
-  }
-}
+//type declaration for console.text
+// declare global {
+//   interface Console {
+//     text: (error: Error) => void;
+//   }
+// }
+
+
 
 const logDir = path.join(__dirname, "..", "logs");
 fs.ensureDirSync(logDir);
