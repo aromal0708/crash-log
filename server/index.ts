@@ -1,3 +1,6 @@
+//Express js enry point to test the error logging
+
+//import necessary modules
 import express from "express";
 import { errorHandler } from "./middleware/errorHandler";
 

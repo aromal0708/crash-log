@@ -1,3 +1,5 @@
+//File to store necessary types for the project
+
 export type ErrorSeverity = "error" | "fatal" | "warn" | "info";
 
 export interface ParseError {

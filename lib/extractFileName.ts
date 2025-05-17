@@ -1,3 +1,6 @@
+//File to extract the file name from the stack trace
+
+//Import necessary modules
 import path from "path";
 
  export const extractFileName = (stack?: string): string | undefined => {

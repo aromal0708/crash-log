@@ -1,3 +1,6 @@
+//File to extract severity from error messages
+
+//Import necessary modules
 export const classifySeverity = (
   error: Error
 ): "info" | "warn" | "error" | "fatal" => {

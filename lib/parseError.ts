@@ -1,8 +1,14 @@
+//File to parse error objects and extract relevant information
+
+
+// Importing necessary modules
 import { ParseError } from "@/types";
 import { extractFileName } from "./extractFileName";
 import { classifySeverity } from "./severityClassifier";
 import dayjs from "dayjs";
 
+// Function to parse an error object and extract relevant information
+// This function takes an error object and returns a ParseError object
 export const parseError = (error:any):ParseError =>{
     let message = "unknown error";
     let stack = "";
@@ -18,10 +24,13 @@ export const parseError = (error:any):ParseError =>{
         stack = error.stack||"";
     }
 
+    //Extract file name and severity from the stack trace
+    // If the stack trace is not available, set file to "unknown"
     file = extractFileName(stack);
     const severity = classifySeverity(error);
 
 
+    //Returns a parsed error object
     return {
         message,
         stack,
