@@ -1,7 +1,11 @@
 export const classifySeverity = (
   error: Error
 ): "info" | "warn" | "error" | "fatal" => {
-  const msg = error.message.toLowerCase();
+  const message = error.message;
+  let msg: string = "";
+  if (message) {
+    msg = message.toLocaleLowerCase();
+  }
 
   if (
     msg.includes("timeout") ||

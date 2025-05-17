@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
 import dayjs from "dayjs";
-import { classifySeverity } from "./severityClassifier";
 import { ParseError } from "@/types";
 import { parseError } from "./parseError";
 
@@ -15,7 +14,7 @@ const logDir = path.join(__dirname, "..", "logs");
 fs.ensureDirSync(logDir);
 
 const writeLog = (error: ParseError) => {
-  const logMessage = `[${error.timestamp}] [${error.severity}] (m)  ${error.message}\n`;
+  const logMessage = `[${error.timestamp}] [${error.severity}] ${error.message}\n`;
   const logFileName = dayjs().format("YYYY-MM-DD") + ".txt";
   const logFilePath = path.join(logDir, logFileName);
 

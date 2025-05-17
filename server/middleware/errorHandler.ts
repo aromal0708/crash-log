@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { overRideConsoleText } from "../../lib/logger";
-import { extractFileName } from "@/lib/extractFileName";
+import { extractFileName } from "../../lib/extractFileName";
 
 export const errorHandler = (
   err: Error,
