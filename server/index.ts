@@ -5,9 +5,10 @@ import express from "express";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
-const port = 3000;
-
 app.use(express.json());
+require("dotenv").config();
+
+const port = process.env.PORT || 5000;
 
 app.get("/test-error", (req, res) => {
   throw new Error("I don't care about this error");
