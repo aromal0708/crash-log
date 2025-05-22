@@ -1,17 +1,38 @@
+import mongoose, { model, Schema } from "mongoose";
+import { IError } from "../types";
 
-import mongoose from "mongoose";
+const errorSchema = new Schema<IError>(
+  {
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      required: true,
+      index: true,
+    },
+    apiKey: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
 
-const errorSchema = new mongoose.Schema({
-  apiKey: { type: String, required: true },
-  message: { type: String, required: true },
-  stack: String,
-  type: String,
-  severity: String,
-  timestamp: { type: Date, default: Date.now },
-  fileName: String,
-  path: String,
-  method: String,
-  metadata: mongoose.Schema.Types.Mixed,
-});
+    timestamp: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
+    stack: String,
+    severity: String,
+    fileName: String,
+    path: String,
+    method: String,
+    metadata: mongoose.Schema.Types.Mixed,
+  },
+  { timestamps: true, versionKey: false }
+);
 
-export default mongoose.model("Error", errorSchema);
+export const Error = model<IError>("Error", errorSchema);

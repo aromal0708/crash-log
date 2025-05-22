@@ -1,11 +1,30 @@
+import { Schema, model } from "mongoose";
+import { IUser } from "../types";
 
-import mongoose from "mongoose";
+const userSchema = new Schema<IUser>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    projects: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Project",
+      },
+    ],
+    name: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true, versionKey: false }
+);
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  name: String,
-  password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
-
-export default mongoose.model("User", userSchema);
+export const User = model<IUser>("User", userSchema);
