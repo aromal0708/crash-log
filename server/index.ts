@@ -9,7 +9,7 @@ import { connectDB } from "./utils/dbConnect";
 
 const app = express();
 app.use(express.json());
-
+connectDB();
 const port = process.env.PORT || 5000;
 
 
@@ -22,3 +22,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`server running on port ${port}`);
 });
+
+app.use("/auth",authRoutes);

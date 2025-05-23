@@ -1,4 +1,4 @@
-import mongoose, { model, Schema } from "mongoose";
+import  { model, Schema } from "mongoose";
 import { IError } from "../types";
 
 const errorSchema = new Schema<IError>(
@@ -12,25 +12,45 @@ const errorSchema = new Schema<IError>(
     apiKey: {
       type: String,
       required: true,
-      unique: true,
       index: true,
     },
     message: {
       type: String,
       required: true,
     },
-
     timestamp: {
       type: Date,
       default: Date.now,
       index: true,
     },
-    stack: String,
-    severity: String,
-    fileName: String,
-    path: String,
-    method: String,
-    metadata: mongoose.Schema.Types.Mixed,
+    stack: {
+      type: String,
+      required: false,
+    },
+    severity: {
+      type: String,
+      default: "error",
+    },
+    fileName: {
+      type: String,
+      required: true,
+    },
+    path: {
+      type: String,
+      required: true,
+    },
+    method: {
+      type: String,
+      required: true,
+    },
+    metadata: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    file: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );
