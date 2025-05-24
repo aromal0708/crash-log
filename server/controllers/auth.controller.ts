@@ -1,6 +1,6 @@
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import { Request, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 
 //User registration route handler
 export const register: RequestHandler = async (req, res) => {
