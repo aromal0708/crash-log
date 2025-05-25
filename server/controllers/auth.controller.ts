@@ -1,9 +1,10 @@
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import { RequestHandler } from "express";
+import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 //User registration route handler
-export const register: RequestHandler = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
@@ -24,12 +25,22 @@ export const register: RequestHandler = async (req, res) => {
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
 
-    const user = await User.create({
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({
       name,
       email,
       password: hashedPassword,
+      project: [],
+    });
+
+    await user.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -49,7 +60,7 @@ export const register: RequestHandler = async (req, res) => {
 };
 
 //User login route handler
-export const login: RequestHandler = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -72,6 +83,14 @@ export const login: RequestHandler = async (req, res) => {
       return;
     }
 
+    // Generate JWT token
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error("JWT secret is not defined in the environment variables");
+    }
+
+    const token = jwt.sign({ userId: user._id }, secret, { expiresIn: "14d" });
+
     res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -80,6 +99,7 @@ export const login: RequestHandler = async (req, res) => {
         name: user.name,
         email: user.email,
       },
+      token: token,
     });
   } catch (error) {
     if (error instanceof Error) {

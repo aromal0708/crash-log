@@ -1,7 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { authRequest } from "../types/global";
+import { User } from "../models/User";
 
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = async (
+  req: authRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = req.headers["authorization"]?.split(" ")[1];
 
@@ -11,14 +17,20 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         message: "Unauthorized access. Please Login to continue",
       });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      userId: string;
+    };
     if (!decoded) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized access. Please Login to continue",
       });
     }
-    (req as any).user = { userId: decoded };
+    const user = await User.findById(decoded.userId).select("-password -__v");
+    if (!user) {
+      throw new Error("User not found");
+    }
+    req.user = { _id: decoded.userId, name: user.name, email: user.email };
     next();
   } catch (error) {
     if (error instanceof Error) {
