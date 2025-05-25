@@ -11,18 +11,21 @@ import projectRoutes from "./routes/projects.routes";
 
 const app = express();
 app.use(express.json());
-connectDB();
+app.use(express.urlencoded({ extended: true }));
+
+//connect to the database
 const port = process.env.PORT || 5000;
 
 app.get("/test-error", (req, res) => {
-  throw new Error("I don't care about this error");
-});
-
-app.use(errorHandler);
-
-app.listen(port, () => {
-  console.log(`server running on port ${port}`);
+  throw new Error("Test error for logging");
 });
 
 app.use("/auth", authRoutes);
 app.use("/projects", projectRoutes);
+
+app.use(errorHandler);
+
+connectDB();
+app.listen(port, () => {
+  console.log(`server running on port ${port}`);
+});
