@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 //User registration route handler
 export const register = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -92,6 +91,13 @@ export const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ userId: user._id }, secret, { expiresIn: "14d" });
 
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days in milliseconds
+    });
+
     res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -100,7 +106,6 @@ export const login = async (req: Request, res: Response) => {
         name: user.name,
         email: user.email,
       },
-      token: token,
     });
   } catch (error) {
     if (error instanceof Error) {

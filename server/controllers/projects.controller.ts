@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { authRequest } from "../types/global";
 import { Project } from "../models/Project";
+import { User } from "../models/User";
 
 export const getProjects = async (
   req: authRequest,
@@ -8,6 +9,10 @@ export const getProjects = async (
 ): Promise<void> => {
   try {
     const userId = req.user?._id;
+
+    const user = await User.findById(userId);
+    console.log({ "User ID:": userId, user: user });
+
     if (!userId) {
       res.status(400).json({
         success: false,
@@ -15,7 +20,8 @@ export const getProjects = async (
       });
       return;
     }
-    const projects = await Project.find({ user: userId });
+    const projects = await Project.find({ userId });
+    // console.log(projects);
     if (!projects || projects.length === 0) {
       res.status(404).json({
         success: false,
@@ -59,6 +65,7 @@ export const createProject = async (
       });
       return;
     }
+
     const { name, description } = req.body;
     if (!name || !description) {
       res.status(400).json({
@@ -68,7 +75,7 @@ export const createProject = async (
       return;
     }
 
-    const existingProject = await Project.find({ name, userId });
+    const existingProject = await Project.find({ name, user: userId });
     if (existingProject && existingProject.length > 0) {
       res.status(400).json({
         success: false,
@@ -84,9 +91,19 @@ export const createProject = async (
     });
 
     await project.save();
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: { projects: project._id },
+      },
+      { new: true }
+    );
+
     res.status(201).json({
       success: true,
       message: "Project created successfully",
+      project,
     });
   } catch (error) {
     if (error instanceof Error) {
