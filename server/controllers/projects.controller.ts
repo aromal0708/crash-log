@@ -254,7 +254,7 @@ export const deleteProject = async (
   try {
     const userId = req.user?._id;
     if (!userId) {
-      res.status(400).json({
+      res.status(401).json({
         success: false,
         message: "User not found. Please login to continue",
       });
@@ -275,7 +275,7 @@ export const deleteProject = async (
     if (!exisingProject) {
       res.status(404).json({
         success: false,
-        message: "Project not found",
+        message: "Project not found or you do not have permission to delete it",
       });
       return;
     }
