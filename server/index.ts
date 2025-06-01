@@ -10,6 +10,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { connectDB } from "./utils/dbConnect";
 import authRoutes from "./routes/auth.routes";
 import projectRoutes from "./routes/projects.routes";
+import errorRoutes from "./routes/error.routes";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
@@ -29,6 +30,8 @@ app.get("/test-error", (req, res) => {
 //Define routes
 app.use("/auth", authRoutes);
 app.use("/projects", projectRoutes);
+app.use("/error",errorRoutes)
+
 
 app.use(errorHandler);
 

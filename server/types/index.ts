@@ -19,7 +19,7 @@ export interface IError extends Document {
   fileName: string;
   path: string;
   method: string;
-  metadata: Record<string, any>;
+  metadata?: Record<string, any>;
   timestamp: Date;
 }
 

@@ -25,7 +25,6 @@ const errorSchema = new Schema<IError>(
     },
     stack: {
       type: String,
-      required: false,
     },
     severity: {
       type: String,
