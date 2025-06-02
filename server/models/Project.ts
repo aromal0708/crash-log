@@ -24,12 +24,6 @@ const projectSchema = new Schema<IProject>(
       unique: true,
       index: true,
     },
-    errorRefs: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Error",
-      },
-    ],
   },
   { timestamps: true, versionKey: false }
 );

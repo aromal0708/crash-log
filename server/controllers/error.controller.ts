@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Error } from "../models/Error";
-import { Project } from "../models/Project";
 
 export const ingestError = async (
   req: Request,
@@ -8,6 +7,7 @@ export const ingestError = async (
 ): Promise<void> => {
   try {
     const project = (req as any).project;
+    console.log(project);
     if (!project) {
       res.status(400).json({
         success: false,
@@ -19,7 +19,7 @@ export const ingestError = async (
       message,
       stack,
       timestamp,
-      filename,
+      fileName,
       severity,
       path,
       method,
@@ -27,7 +27,20 @@ export const ingestError = async (
       metadata,
     } = req.body;
 
-    if (!message || !timestamp || !filename || !path || !method || !file) {
+    console.log({
+      message,
+      stack,
+      timestamp,
+      fileName,
+      severity,
+      path,
+      method,
+      file,
+      metadata,
+    });
+
+
+    if (!message || !timestamp || !fileName || !path || !method || !file) {
       res.status(400).json({
         success: false,
         message: "Missing required fields",
@@ -41,7 +54,7 @@ export const ingestError = async (
       message,
       stack,
       timestamp,
-      fileName: filename,
+      fileName: fileName,
       severity: severity || "error",
       path,
       method,
@@ -50,12 +63,6 @@ export const ingestError = async (
     });
 
     await error.save();
-
-    await Project.findByIdAndUpdate(
-      { _id: project._id },
-      { $push: { errorRefs: error._id } }
-    );
-    
     res.status(201).json({
       success: true,
       message: "Error ingested successfully",
