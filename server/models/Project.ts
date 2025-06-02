@@ -1,7 +1,14 @@
+// Description:Model for managing projects in the application.
+// This model defines the schema for project data, including user association, project name, description, and API key.
+
+
+//Import necessary modules
 import mongoose, { model, Schema } from "mongoose";
 import { v4 as uuid } from "uuid";
 import { IProject } from "../types";
 
+
+// Define the schema for the Project model
 const projectSchema = new Schema<IProject>(
   {
     userId: {

@@ -1,6 +1,11 @@
+//Controller for handling error ingestion in the application.
+
+//Import necessary modules
 import { Request, Response } from "express";
 import { Error } from "../models/Error";
 
+// Function to handle error ingestion
+// This function will be called when an error is ingested via the API
 export const ingestError = async (
   req: Request,
   res: Response
@@ -15,6 +20,7 @@ export const ingestError = async (
       });
       return;
     }
+    // Extract error details from the request body
     const {
       message,
       stack,
@@ -27,19 +33,7 @@ export const ingestError = async (
       metadata,
     } = req.body;
 
-    console.log({
-      message,
-      stack,
-      timestamp,
-      fileName,
-      severity,
-      path,
-      method,
-      file,
-      metadata,
-    });
-
-
+    // Validate required fields
     if (!message || !timestamp || !fileName || !path || !method || !file) {
       res.status(400).json({
         success: false,
@@ -47,7 +41,7 @@ export const ingestError = async (
       });
       return;
     }
-
+    // Create a new error document
     const error = new Error({
       projectId: project._id,
       apiKey: project.apiKey,
@@ -62,7 +56,10 @@ export const ingestError = async (
       metadata: metadata || {},
     });
 
+    // Save the error document to the database
     await error.save();
+
+    // Respond with success
     res.status(201).json({
       success: true,
       message: "Error ingested successfully",
@@ -72,6 +69,7 @@ export const ingestError = async (
       },
     });
   } catch (error) {
+    // Handle errors and respond with appropriate status codes
     if (error instanceof Error) {
       res.status(500).json({
         success: false,

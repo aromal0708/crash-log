@@ -1,7 +1,21 @@
+// Description: Controller for handling error ingestion in the application.
+
+//Import necessary modules
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { authRequest } from "../types/global";
 import { User } from "../models/User";
+
+/**
+ * Middleware to verify JWT token and authenticate user.
+ * It checks for the token in cookies or authorization header,
+ * verifies it, and attaches user information to the request object.
+ *
+ * @param {authRequest} req - The request object containing user information.
+ * @param {Response} res - The response object to send back the result.
+ * @param {NextFunction} next - The next middleware function to call if authentication is successful.
+ */
+
 
 export const verifyToken = async (
   req: authRequest,

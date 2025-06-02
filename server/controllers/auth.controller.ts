@@ -1,3 +1,7 @@
+//Controller for handling error ingestion in the application.
+// This controller processes incoming error reports, validates the data, and saves it to the database.
+
+// Import necessary modules
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
@@ -6,8 +10,11 @@ import jwt from "jsonwebtoken";
 //User registration route handler
 export const register = async (req: Request, res: Response) => {
   try {
+
+    // Extract user details from the request body
     const { name, email, password } = req.body;
 
+    // Validate required fields
     if (!name || !email || !password) {
       res.status(400).json({
         success: false,
@@ -16,6 +23,7 @@ export const register = async (req: Request, res: Response) => {
       return;
     }
 
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(400).json({
@@ -25,10 +33,11 @@ export const register = async (req: Request, res: Response) => {
       return;
     }
 
+    // Hash the password before saving
     const salt = await bcrypt.genSalt(10);
-
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Create a new user instance and save it to the database
     const user = new User({
       name,
       email,
@@ -36,13 +45,16 @@ export const register = async (req: Request, res: Response) => {
       project: [],
     });
 
+    // Save the user to the database
     await user.save();
 
+    // Respond with success message
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
     });
   } catch (error) {
+    // Handle errors and respond with appropriate status code and message
     if (error instanceof Error) {
       res.status(500).json({
         success: false,
@@ -62,10 +74,21 @@ export const register = async (req: Request, res: Response) => {
 //User login route handler
 export const login = async (req: Request, res: Response) => {
   try {
+    // Extract email and password from the request body
     const { email, password } = req.body;
 
+    // Validate required fields
+    if (!email || !password) {
+      res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+      return;
+    }
+    // Check if the user exists
     const user = await User.findOne({ email });
 
+    // If user not found, respond with an error
     if (!user) {
       res.status(400).json({
         success: false,
@@ -74,6 +97,8 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
+    // Compare the provided password with the hashed password in the database
+    // If the password is incorrect, respond with an error
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       res.status(400).json({
@@ -91,6 +116,8 @@ export const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ userId: user._id }, secret, { expiresIn: "14d" });
 
+    // Set the JWT token in a cookie
+    // The cookie is set to be HTTP-only, secure (in production), and has a max age of 14 days
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -98,6 +125,7 @@ export const login = async (req: Request, res: Response) => {
       maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days in milliseconds
     });
 
+    // Respond with success message and user details
     res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -108,6 +136,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    // Handle errors and respond with appropriate status code and message
     if (error instanceof Error) {
       res.status(500).json({
         success: false,

@@ -1,6 +1,11 @@
+// Description: Model for user management in the application.
+// This model defines the schema for user data, including email, projects, name, and password.
+
+// Import necessary modules
 import { Schema, model } from "mongoose";
 import { IUser } from "../types";
 
+// Define the schema for the User model
 const userSchema = new Schema<IUser>(
   {
     email: {

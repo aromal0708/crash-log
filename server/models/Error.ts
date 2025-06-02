@@ -1,6 +1,10 @@
+// Description: Controller for handling error ingestion in the application.
+
+//Import necessary modules
 import  { model, Schema } from "mongoose";
 import { IError } from "../types";
 
+// Define the schema for error logging
 const errorSchema = new Schema<IError>(
   {
     projectId: {

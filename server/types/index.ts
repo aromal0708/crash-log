@@ -1,5 +1,11 @@
+// Description: Types for the schema definitions in the application.
+// This file defines the interfaces for User, Error, and Project models used in the application.
+
+// Import necessary modules
 import { Document, Types } from "mongoose";
 
+
+//Define the interface for the User model
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -9,6 +15,7 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
+// Define the interface for the Error model
 export interface IError extends Document {
   projectId: Types.ObjectId;
   apiKey: string;
@@ -23,6 +30,7 @@ export interface IError extends Document {
   timestamp: Date;
 }
 
+// Define the interface for the Project model
 export interface IProject extends Document {
   name: string;
   description: string;
