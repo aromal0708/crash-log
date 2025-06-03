@@ -1,7 +1,7 @@
 // Description: Controller for handling error ingestion in the application.
 
 //Import necessary modules
-import  { model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IError } from "../types";
 
 // Define the schema for error logging
@@ -53,6 +53,10 @@ const errorSchema = new Schema<IError>(
     file: {
       type: String,
       required: true,
+    },
+    resolved: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true, versionKey: false }

@@ -2,7 +2,7 @@
 // This file defines the interfaces for User, Error, and Project models used in the application.
 
 // Import necessary modules
-import { Document, Types } from "mongoose";
+import { BooleanExpression, Document, Types } from "mongoose";
 
 
 //Define the interface for the User model
@@ -28,6 +28,7 @@ export interface IError extends Document {
   method: string;
   metadata?: Record<string, any>;
   timestamp: Date;
+  resolved?:boolean
 }
 
 // Define the interface for the Project model

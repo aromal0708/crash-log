@@ -85,3 +85,57 @@ export const ingestError = async (
     }
   }
 };
+
+
+//get errors in a project based on filters
+export const getError = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { projectId, severity, page = 1, limit = 10, from, to } = req.query;
+
+    if (!projectId || typeof projectId !== "string") {
+      res.status(400).json({
+        success: false,
+        message: "Invalid projectId",
+      });
+      return;
+    }
+
+    const query: any = { projectId };
+
+    if (severity) query.severity = severity;
+
+    if (from || to) {
+      query.timestamp = {};
+      if (from) query.timestamp.$gte = new Date(from as string);
+      if (to) query.timestamp.$lte = new Date(to as string);
+    }
+
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const [error, total] = await Promise.all([
+      Error.find(query).sort({ timestamp: -1 }).skip(skip).limit(limitNumber),
+      Error.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: "Errors fetched successfully",
+      data: {
+        errors: error,
+        total: total,
+        page: pageNumber,
+        limit: limitNumber,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+    return;
+  }
+};
+
+
