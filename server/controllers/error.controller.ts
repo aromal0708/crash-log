@@ -90,8 +90,10 @@ export const ingestError = async (
 //get errors in a project based on filters
 export const getError = async (req: Request, res: Response): Promise<void> => {
   try {
+    // Extract query parameters from the request
     const { projectId, severity, page = 1, limit = 10, from, to } = req.query;
 
+    // Validate projectId
     if (!projectId || typeof projectId !== "string") {
       res.status(400).json({
         success: false,
@@ -100,25 +102,30 @@ export const getError = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    //Extract and validate other query parameters
     const query: any = { projectId };
 
     if (severity) query.severity = severity;
 
+    // Validate pagination parameters
     if (from || to) {
       query.timestamp = {};
       if (from) query.timestamp.$gte = new Date(from as string);
       if (to) query.timestamp.$lte = new Date(to as string);
     }
 
+    // Validate page and limit parameters
     const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
     const skip = (pageNumber - 1) * limitNumber;
 
+    // Validate pagination parameters
     const [error, total] = await Promise.all([
       Error.find(query).sort({ timestamp: -1 }).skip(skip).limit(limitNumber),
       Error.countDocuments(query),
     ]);
 
+    //Return success response with the errors and total count
     res.status(200).json({
       success: true,
       message: "Errors fetched successfully",
@@ -130,6 +137,7 @@ export const getError = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (err) {
+    // Handle errors and respond with appropriate status codes
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -138,14 +146,30 @@ export const getError = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// Function to get a specific error by its ID
+// This function will be called when a specific error is requested via the API
 export const getErrorById = async (
   req: authRequest,
   res: Response
 ): Promise<void> => {
   try {
+    // Extract user ID from the request
     const userId = req.user?._id;
+    // Check if user ID is present
+    // If not, respond with an unauthorized status
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    // Extract error ID from the request parameters
     const { errorId } = req.params;
 
+    // Check if error ID is present
+    // If not, respond with a bad request status
     if (!errorId) {
       res.status(400).json({
         success: false,
@@ -154,8 +178,11 @@ export const getErrorById = async (
       return;
     }
 
+    // Find the error by its ID and populate the projectId field
     const error = await Error.findById(errorId).populate("projectId");
 
+
+    // Check if the error was found and if it has a projectId
     if (!error || !error.projectId) {
       res.status(404).json({
         success: false,
@@ -163,6 +190,9 @@ export const getErrorById = async (
       });
       return;
     }
+
+    // Check if the user has permission to access the error
+    // If the user ID does not match the projectId's userId, respond with a forbidden status
 
     //@ts-ignore
     if (error.projectId?.userId !== userId) {
@@ -173,12 +203,14 @@ export const getErrorById = async (
       return;
     }
 
+    // Respond with success and the error data
     res.status(200).json({
       success: true,
       message: "Error fetched successfully",
       data: error,
     });
   } catch (err) {
+    // Handle errors and respond with appropriate status codes
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -188,12 +220,18 @@ export const getErrorById = async (
   }
 };
 
+// Function to update the status of an error
+// This function will be called when an error's status is updated via the API
 export const updateErrorStatus = async (
   req: authRequest,
   res: Response
 ): Promise<void> => {
   try {
+    // Extract user ID from the request
     const userId = req.user?._id;
+
+    // Check if user ID is present
+    // If not, respond with an unauthorized status
     if (!userId) {
       res.status(401).json({
         success: false,
@@ -201,8 +239,12 @@ export const updateErrorStatus = async (
       });
       return;
     }
+
+    // Extract error ID from the request parameters
     const { errorId } = req.params;
 
+    // Check if error ID is present
+    // If not, respond with a bad request status
     if (!errorId) {
       res.status(400).json({
         success: false,
@@ -211,8 +253,10 @@ export const updateErrorStatus = async (
       return;
     }
 
+    // Find the error by its ID and populate the projectId field
     const error = await Error.findById(errorId).populate("projectId");
 
+    // Check if the error was found and if it has a projectId
     if (!error || !error.projectId) {
       res.status(404).json({
         success: false,
@@ -221,6 +265,8 @@ export const updateErrorStatus = async (
       return;
     }
 
+    // Check if the user has permission to update the error
+    // If the user ID does not match the projectId's userId, respond with a forbidden status
     //@ts-ignore
     if (error.projectId.userId.toString() !== userId.toString()) {
       res.status(403).json({
@@ -230,6 +276,9 @@ export const updateErrorStatus = async (
       return;
     }
 
+
+    // Check if the request body contains a valid status
+    // If not, respond with a bad request status
     const { status } = req.body;
     if (!status || (status !== "resolved" && status !== "unresolved")) {
       res.status(400).json({
@@ -239,15 +288,19 @@ export const updateErrorStatus = async (
       return;
     }
 
+    // Update the error's resolved status based on the provided status
+    // If the status is "resolved", set resolved to true; otherwise, set it to false
     error.resolved = status === "resolved";
     await error.save();
 
+    // Respond with success and the updated error data
     res.status(200).json({
       success: true,
       message: "Error status updated successfully",
       data: error,
     });
   } catch (err) {
+    // Handle errors and respond with appropriate status codes
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
