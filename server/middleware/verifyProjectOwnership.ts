@@ -8,7 +8,7 @@ export const verifyProjectOwnership = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const projectId = req.query.projectId || req.params.id;
+    const projectId = req.query.projectId ;
     if (!projectId) {
       res.status(400).json({
         success: false,

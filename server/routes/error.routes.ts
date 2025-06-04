@@ -3,8 +3,14 @@
 
 // Import necessary modules
 import { RequestHandler, Router } from "express";
-import { getError, ingestError } from "../controllers/error.controller";
+import {
+  getError,
+  getErrorById,
+  ingestError,
+  updateErrorStatus,
+} from "../controllers/error.controller";
 import { verifyApiKey } from "../middleware/verifyApiKey";
+import { verifyToken } from "../middleware/authenticateToken";
 import { verifyProjectOwnership } from "../middleware/verifyProjectOwnership";
 
 const router = Router();
@@ -16,5 +22,7 @@ router.get(
   verifyProjectOwnership as RequestHandler,
   getError
 );
+router.get("/:id", verifyToken as RequestHandler, getErrorById);
+router.patch("/:id", verifyToken as RequestHandler, updateErrorStatus);
 
 export default router;

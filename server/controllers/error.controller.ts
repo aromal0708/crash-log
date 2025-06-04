@@ -3,6 +3,7 @@
 //Import necessary modules
 import { Request, Response } from "express";
 import { Error } from "../models/Error";
+import { authRequest } from "../types/global";
 
 // Function to handle error ingestion
 // This function will be called when an error is ingested via the API
@@ -86,7 +87,6 @@ export const ingestError = async (
   }
 };
 
-
 //get errors in a project based on filters
 export const getError = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -138,4 +138,121 @@ export const getError = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getErrorById = async (
+  req: authRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?._id;
+    const { errorId } = req.params;
 
+    if (!errorId) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid errorId",
+      });
+      return;
+    }
+
+    const error = await Error.findById(errorId).populate("projectId");
+
+    if (!error || !error.projectId) {
+      res.status(404).json({
+        success: false,
+        message: "Error not found",
+      });
+      return;
+    }
+
+    //@ts-ignore
+    if (error.projectId?.userId !== userId) {
+      res.status(403).json({
+        success: false,
+        message: "You do not have permission to access this error",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Error fetched successfully",
+      data: error,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: err,
+    });
+    return;
+  }
+};
+
+export const updateErrorStatus = async (
+  req: authRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+    const { errorId } = req.params;
+
+    if (!errorId) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid errorId",
+      });
+      return;
+    }
+
+    const error = await Error.findById(errorId).populate("projectId");
+
+    if (!error || !error.projectId) {
+      res.status(404).json({
+        success: false,
+        message: "Error not found",
+      });
+      return;
+    }
+
+    //@ts-ignore
+    if (error.projectId.userId.toString() !== userId.toString()) {
+      res.status(403).json({
+        success: false,
+        message: "You do not have permission to update this error",
+      });
+      return;
+    }
+
+    const { status } = req.body;
+    if (!status || (status !== "resolved" && status !== "unresolved")) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+      return;
+    }
+
+    error.resolved = status === "resolved";
+    await error.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Error status updated successfully",
+      data: error,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: err,
+    });
+    return;
+  }
+};
