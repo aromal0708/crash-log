@@ -13,7 +13,6 @@ export const ingestError = async (
 ): Promise<void> => {
   try {
     const project = (req as any).project;
-    console.log(project);
     if (!project) {
       res.status(400).json({
         success: false,
@@ -166,11 +165,11 @@ export const getErrorById = async (
     }
 
     // Extract error ID from the request parameters
-    const { errorId } = req.params;
+    const { id } = req.params;
 
     // Check if error ID is present
     // If not, respond with a bad request status
-    if (!errorId) {
+    if (!id) {
       res.status(400).json({
         success: false,
         message: "Invalid errorId",
@@ -179,8 +178,7 @@ export const getErrorById = async (
     }
 
     // Find the error by its ID and populate the projectId field
-    const error = await Error.findById(errorId).populate("projectId");
-
+    const error = await Error.findById(id).populate("projectId");
 
     // Check if the error was found and if it has a projectId
     if (!error || !error.projectId) {
@@ -195,7 +193,7 @@ export const getErrorById = async (
     // If the user ID does not match the projectId's userId, respond with a forbidden status
 
     //@ts-ignore
-    if (error.projectId?.userId !== userId) {
+    if (error.projectId?.userId.toString() !== userId) {
       res.status(403).json({
         success: false,
         message: "You do not have permission to access this error",
@@ -221,7 +219,6 @@ export const getErrorById = async (
 };
 
 // Function to update the status of an error
-// This function will be called when an error's status is updated via the API
 export const updateErrorStatus = async (
   req: authRequest,
   res: Response
@@ -241,11 +238,11 @@ export const updateErrorStatus = async (
     }
 
     // Extract error ID from the request parameters
-    const { errorId } = req.params;
+    const { id } = req.params;
 
     // Check if error ID is present
     // If not, respond with a bad request status
-    if (!errorId) {
+    if (!id) {
       res.status(400).json({
         success: false,
         message: "Invalid errorId",
@@ -254,7 +251,7 @@ export const updateErrorStatus = async (
     }
 
     // Find the error by its ID and populate the projectId field
-    const error = await Error.findById(errorId).populate("projectId");
+    const error = await Error.findById(id).populate("projectId");
 
     // Check if the error was found and if it has a projectId
     if (!error || !error.projectId) {
@@ -275,7 +272,6 @@ export const updateErrorStatus = async (
       });
       return;
     }
-
 
     // Check if the request body contains a valid status
     // If not, respond with a bad request status

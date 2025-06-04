@@ -22,7 +22,7 @@ router.get(
   verifyProjectOwnership as RequestHandler,
   getError
 );
-router.get("/:id", verifyToken as RequestHandler, getErrorById);
+router.get("/getError/:id", verifyToken as RequestHandler, getErrorById);
 router.patch("/:id", verifyToken as RequestHandler, updateErrorStatus);
 
 export default router;
