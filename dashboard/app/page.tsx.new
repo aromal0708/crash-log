@@ -1,0 +1,141 @@
+import DashboardLayout from './components/DashboardLayout';
+import ProjectCard from './components/ProjectCard';
+import StatCard from './components/StatCard';
+import { ErrorIcon, WarningIcon, InfoIcon } from './components/Icons';
+
+export default function Home() {
+  // Mock data for projects
+  const projects = [
+    {
+      id: 1,
+      title: 'E-commerce Platform',
+      apiKey: 'pk_test_abc123def456',
+      lastError: 'TypeError: Cannot read property \'items\' of undefined at checkout.js:214',
+      errorCount: { errors: 23, warnings: 8, info: 12 }
+    },
+    {
+      id: 2,
+      title: 'Marketing Website',
+      apiKey: 'pk_test_xyz789uvw012',
+      lastError: 'SyntaxError: Unexpected token in JSON at position 4 in analytics.js:45',
+      errorCount: { errors: 7, warnings: 15, info: 9 }
+    },
+    {
+      id: 3,
+      title: 'Mobile API Backend',
+      apiKey: 'pk_test_ghi456jkl789',
+      lastError: 'ReferenceError: authToken is not defined at users/authenticate.js:78',
+      errorCount: { errors: 15, warnings: 4, info: 7 }
+    },
+    {
+      id: 4,
+      title: 'Admin Dashboard',
+      apiKey: 'pk_test_mno123pqr456',
+      lastError: 'Error: Network request failed at data-fetcher.js:92',
+      errorCount: { errors: 12, warnings: 11, info: 5 }
+    }
+  ];
+
+  return (
+    <DashboardLayout>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard 
+          title="Total Errors" 
+          value="1,284" 
+          change={{ value: "12%", trend: "up" }}
+          icon={<ErrorIcon className="w-5 h-5 text-red-500" />}
+        />
+        <StatCard 
+          title="Total Warnings" 
+          value="857" 
+          change={{ value: "3%", trend: "down" }}
+          icon={<WarningIcon className="w-5 h-5 text-yellow-500" />}
+        />
+        <StatCard 
+          title="Active Projects" 
+          value="12" 
+          change={{ value: "2", trend: "up" }}
+          icon={<InfoIcon className="w-5 h-5 text-blue-500" />}
+        />
+        <StatCard 
+          title="Error Rate" 
+          value="2.4%" 
+          change={{ value: "0.5%", trend: "down" }}
+        />
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Recent Projects</h2>
+          <button className="text-sm text-[var(--primary-color)] font-medium hover:underline">
+            View All Projects
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {projects.map(project => (
+            <ProjectCard 
+              key={project.id}
+              title={project.title}
+              apiKey={project.apiKey}
+              lastError={project.lastError}
+              errorCount={project.errorCount}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Recent Errors</h2>
+          <button className="text-sm text-[var(--primary-color)] font-medium hover:underline">
+            View All Errors
+          </button>
+        </div>
+        
+        <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg overflow-hidden shadow-sm">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[var(--border-color)]">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Project</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Message</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Time</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3, 4, 5].map((_, i) => (
+                <tr key={i} className={i % 2 === 0 ? 'bg-[var(--background)]' : ''}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
+                    {projects[i % projects.length].title}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                      Error
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-[var(--text-muted)] max-w-xs truncate">
+                    {projects[i % projects.length].lastError}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                    {i === 0 ? '2 mins ago' : 
+                     i === 1 ? '15 mins ago' : 
+                     i === 2 ? '1 hour ago' : 
+                     i === 3 ? '3 hours ago' : 
+                     '1 day ago'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button className="text-[var(--primary-color)] hover:text-opacity-80">
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
