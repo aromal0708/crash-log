@@ -402,36 +402,36 @@ export default function ProjectDetail() {
             <div className="bg-[#2C2C2D] border border-[#3A3A3B] rounded-lg">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#3A3A3B]">
                 <h3 className="text-md font-medium text-white">Recent Errors</h3>
-                <Link href={`/projects/${projectId}/errors`}>
-                  <button 
-                    className="text-xs text-[#9CA3AF] hover:text-white transition-colors cursor-pointer"
-                    onClick={() => setActiveTab('errors')}
-                  >
-                    View All
-                  </button>
-                </Link>
+                <button 
+                  className="text-xs text-[#9CA3AF] hover:text-white transition-colors cursor-pointer"
+                  onClick={() => setActiveTab('errors')}
+                >
+                  View All
+                </button>
               </div>
               <div className="divide-y divide-[#3A3A3B]">
                 {mockErrors.slice(0, 3).map(error => (
-                  <div key={error.id} className="p-4 hover:bg-[#252526]/40 transition-colors">
-                    <div className="flex items-start">
-                      <div className={`mt-0.5 mr-3 flex-shrink-0 w-2 h-2 rounded-full ${
-                        error.severity === 'error' 
-                          ? 'bg-red-400' 
-                          : error.severity === 'warning' 
-                            ? 'bg-yellow-400' 
-                            : 'bg-blue-400'
-                      }`}></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white line-clamp-1">{error.message}</p>
-                        <p className="text-xs text-[#9CA3AF] mt-1 font-mono line-clamp-1">{error.stack}</p>
-                        <div className="flex items-center mt-2 space-x-4">
-                          <span className="text-xs text-[#9CA3AF]">{formatDate(error.timestamp)}</span>
-                          <span className="text-xs text-[#9CA3AF]">{error.metadata?.browser}</span>
-                          <span className="text-xs text-[#9CA3AF]">{error.metadata?.url || error.path}</span>
+                  <div key={error.id} className="p-4 hover:bg-[#252526]/40 transition-colors cursor-pointer">
+                    <Link href={`/projects/${projectId}/errors/${error.id}`} className="block">
+                      <div className="flex items-start">
+                        <div className={`mt-0.5 mr-3 flex-shrink-0 w-2 h-2 rounded-full ${
+                          error.severity === 'error' 
+                            ? 'bg-red-400' 
+                            : error.severity === 'warning' 
+                              ? 'bg-yellow-400' 
+                              : 'bg-blue-400'
+                        }`}></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white line-clamp-1">{error.message}</p>
+                          <p className="text-xs text-[#9CA3AF] mt-1 font-mono line-clamp-1">{error.stack}</p>
+                          <div className="flex items-center mt-2 space-x-4">
+                            <span className="text-xs text-[#9CA3AF]">{formatDate(error.timestamp)}</span>
+                            <span className="text-xs text-[#9CA3AF]">{error.metadata?.browser}</span>
+                            <span className="text-xs text-[#9CA3AF]">{error.metadata?.url || error.path}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -478,31 +478,33 @@ export default function ProjectDetail() {
               <div className="divide-y divide-[#3A3A3B]">
                 {mockErrors.map(error => (
                   <div key={error.id} className="p-4 hover:bg-[#252526]/40 transition-colors cursor-pointer">
-                    <div className="flex items-start">
-                      <div className={`mt-0.5 mr-3 flex-shrink-0 w-2 h-2 rounded-full ${
-                        error.severity === 'error' 
-                          ? 'bg-red-400' 
-                          : error.severity === 'warning' 
-                            ? 'bg-yellow-400' 
-                            : 'bg-blue-400'
-                      }`}></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white line-clamp-1">{error.message}</p>
-                        <p className="text-xs text-[#9CA3AF] mt-1 font-mono line-clamp-1">{error.stack}</p>
-                        <div className="flex flex-wrap items-center mt-2 gap-x-4 gap-y-1">
-                          <span className="text-xs text-[#9CA3AF]">{formatDate(error.timestamp)}</span>
-                          <span className="text-xs text-[#9CA3AF]">{error.metadata?.browser}</span>
-                          <span className="text-xs text-[#9CA3AF]">{error.metadata?.os}</span>
-                          <span className="text-xs text-[#9CA3AF]">{error.metadata?.url || error.path}</span>
+                    <Link href={`/projects/${projectId}/errors/${error.id}`} className="block">
+                      <div className="flex items-start">
+                        <div className={`mt-0.5 mr-3 flex-shrink-0 w-2 h-2 rounded-full ${
+                          error.severity === 'error' 
+                            ? 'bg-red-400' 
+                            : error.severity === 'warning' 
+                              ? 'bg-yellow-400' 
+                              : 'bg-blue-400'
+                        }`}></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white line-clamp-1">{error.message}</p>
+                          <p className="text-xs text-[#9CA3AF] mt-1 font-mono line-clamp-1">{error.stack}</p>
+                          <div className="flex flex-wrap items-center mt-2 gap-x-4 gap-y-1">
+                            <span className="text-xs text-[#9CA3AF]">{formatDate(error.timestamp)}</span>
+                            <span className="text-xs text-[#9CA3AF]">{error.metadata?.browser}</span>
+                            <span className="text-xs text-[#9CA3AF]">{error.metadata?.os}</span>
+                            <span className="text-xs text-[#9CA3AF]">{error.metadata?.url || error.path}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center ml-4">
-                        <button className="p-1.5 text-[#9CA3AF] hover:text-white rounded-md hover:bg-[#3A3A3B] transition-colors cursor-pointer">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+                    </Link>
+                    <div className="flex items-center justify-end mt-1">
+                      <button className="p-1.5 text-[#9CA3AF] hover:text-white rounded-md hover:bg-[#3A3A3B] transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 ))}
