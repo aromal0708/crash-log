@@ -3,17 +3,17 @@ import Header from './Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#111111] antialiased">
+    <div className="min-h-screen bg-[#111111] antialiased flex flex-col">
       <Sidebar />
       
-      <div className="ml-64 transition-all">
+      <div className="ml-64 transition-all flex flex-col min-h-screen">
         <Header />
         
-        <main className="pt-24 px-6 md:px-8 pb-16">
+        <main className="pt-24 px-6 md:px-8 pb-16 flex-grow">
           {children}
         </main>
         
-        <footer className="px-8 py-6 text-center text-[#6B7280] text-xs border-t border-[#2C2C2D]">
+        <footer className="px-8 py-6 text-center text-[#6B7280] text-xs border-t border-[#2C2C2D] mt-auto sticky bottom-0 bg-[#111111] z-10">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center">
             <p>© 2025 CrashLog. All rights reserved.</p>
             <div className="flex items-center space-x-4 mt-3 sm:mt-0">
